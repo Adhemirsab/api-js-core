@@ -1,5 +1,7 @@
+import isNumber from "is-number";
+
 export const handler = async () => {
   return {
-    message: "world",
+    message: "world " + isNumber(42),
   };
 };

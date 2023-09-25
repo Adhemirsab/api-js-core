@@ -6,5 +6,9 @@
   "scripts": {
     "test": "vitest"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "is-number": "^7.0.0",
+    "to-no-case": "^1.0.2"
+  }
 }

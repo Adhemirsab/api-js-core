@@ -1,5 +1,7 @@
+import toNoCase from "to-no-case";
+
 export const handler = async () => {
   return {
-    message: "hello",
+    message: toNoCase("hello"),
   };
 };
