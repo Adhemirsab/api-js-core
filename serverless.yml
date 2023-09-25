@@ -17,10 +17,14 @@ package:
 
 functions:
   hello:
-    handler: dist/hello/index.handler
+    handler: dist/hello.handler
     package:
-      patterns: "dist/hello/**"
+      patterns: "dist/hello.js"
   world:
-    handler: dist/world/index.handler
+    handler: dist/world.handler
     package:
-      patterns: "dist/world/**"
+      patterns: "dist/world.js"
+  dummy:
+    handler: build/functions/dummy.handler
+    package:
+      patterns: "build/**"
