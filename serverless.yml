@@ -1,0 +1,14 @@
+service: api-js-core
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  architecture: arm64
+  region: ${env:AWS_REGION}
+  stage: ${env:STAGE}
+
+functions:
+  jshandler:
+    handler: index.handler
