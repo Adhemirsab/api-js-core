@@ -11,7 +11,9 @@ provider:
 
 package:
   individually: true
-  patterns: "!**/*"
+  patterns:
+    - "!**/*"
+    - "package.json"
 
 functions:
   hello:
