@@ -4,14 +4,12 @@
   "description": "core",
   "type": "module",
   "scripts": {
-    "esbuild:ts": "esbuild src/functions/*.ts --bundle --platform=node --outdir=dist --format=esm",
-    "esbuild": "esbuild src/functions/*.js --bundle --platform=node --outdir=dist --format=esm",
-    "build": "npm run esbuild && npm run esbuild:ts",
+    "build": "esbuild src/functions/*.ts --bundle --minify --platform=node --outdir=dist --format=esm",
     "test": "vitest"
   },
   "license": "ISC",
   "devDependencies": {
-    "esbuild": "^0.19.3",
-    "typescript": "^5.2.2"
+    "@types/node": "^20.6.5",
+    "esbuild": "^0.19.3"
   }
 }
