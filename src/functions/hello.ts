@@ -1,9 +1,14 @@
 import { tryFn } from "../utilities/tryFn";
+import axios from 'axios'
 
 export const handler = async () => {
-  const [_, data] = await tryFn(() => "hello");
+  const [ok, name] = await tryFn(async () => {
+    const { data } = await axios.get<{ name: string }>("https://rickandmortyapi.com/api/character/2")
+
+    return data.name
+  })
 
   return {
-    message: data,
+    message: ok ? name : "NOONE",
   };
 };

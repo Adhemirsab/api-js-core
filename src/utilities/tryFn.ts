@@ -1,11 +1,13 @@
-type Response = [true, string, null] | [false, null, unknown];
+type Response<D> = [true, D, undefined] | [false, undefined, unknown];
 
-export const tryFn = async (fn: () => Promise<string> | string): Promise<Response> => {
+export const tryFn = async <D = unknown>(
+  fn: () => Promise<D> | D,
+): Promise<Response<D>> => {
   try {
     const result = await fn();
 
-    return [true, result, null];
+    return [true, result, undefined];
   } catch (error) {
-    return [false, null, error];
+    return [false, undefined, error];
   }
 };
