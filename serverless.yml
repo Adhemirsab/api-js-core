@@ -9,8 +9,16 @@ provider:
   region: ${env:AWS_REGION}
   stage: ${env:STAGE}
 
+package:
+  individually: true
+  patterns: "!**/*"
+
 functions:
   hello:
-    handler: src/handler/hello.handler
+    handler: dist/hello/index.handler
+    package:
+      patterns: "dist/hello/**"
   world:
-    handler: src/handler/world.handler
+    handler: dist/world/index.handler
+    package:
+      patterns: "dist/world/**"

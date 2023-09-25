@@ -4,11 +4,15 @@
   "description": "core",
   "type": "module",
   "scripts": {
+    "build": "esbuild src/functions/*/index.js --bundle --platform=node --outdir=dist --format=esm",
     "test": "vitest"
   },
   "license": "ISC",
   "dependencies": {
     "is-number": "^7.0.0",
     "to-no-case": "^1.0.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.3"
   }
 }
