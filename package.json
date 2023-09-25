@@ -4,9 +4,9 @@
   "description": "core",
   "type": "module",
   "scripts": {
-    "tsc": "tsc",
+    "esbuild:ts": "esbuild src/functions/*.ts --bundle --platform=node --outdir=dist --format=esm",
     "esbuild": "esbuild src/functions/*.js --bundle --platform=node --outdir=dist --format=esm",
-    "build": "npm run tsc && npm run esbuild",
+    "build": "npm run esbuild && npm run esbuild:ts",
     "test": "vitest"
   },
   "license": "ISC",
