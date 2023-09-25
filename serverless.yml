@@ -10,5 +10,7 @@ provider:
   stage: ${env:STAGE}
 
 functions:
-  jshandler:
-    handler: index.handler
+  hello:
+    handler: src/handler/hello.handler
+  world:
+    handler: src/handler/world.handler
