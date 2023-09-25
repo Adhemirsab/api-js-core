@@ -1,0 +1,10 @@
+{
+  "name": "api-js-core",
+  "version": "1.0.0",
+  "description": "core",
+  "type": "module",
+  "scripts": {
+    "test": "vitest"
+  },
+  "license": "ISC"
+}
