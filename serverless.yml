@@ -13,7 +13,6 @@ package:
   individually: true
   patterns:
     - "!**/*"
-    - "package.json"
 
 functions:
   hello:
