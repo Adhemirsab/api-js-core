@@ -27,7 +27,6 @@ functions:
       patterns: "dist/hello.js"
     events:
       - eventBridge:
-          eventBus: ${self:custom.prefix}-eventbus
           schedule: rate(2 minutes)
   world:
     handler: dist/world.handler
