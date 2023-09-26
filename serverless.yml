@@ -24,7 +24,7 @@ functions:
   hello:
     handler: dist/hello.handler
     package:
-      patterns: "dist/hello.js"
+      patterns: ["dist/hello.js", "package.json"]
 
 resources:
   Resources:

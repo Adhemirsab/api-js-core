@@ -14,5 +14,7 @@ export const handler = async () => {
     message: ok ? name : "NOONE",
   };
 
+  console.log(JSON.stringify(result, null, 2));
+
   return result;
 };

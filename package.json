@@ -2,8 +2,9 @@
   "name": "api-js-core",
   "version": "1.0.0",
   "description": "core",
+  "type": "module",
   "scripts": {
-    "build": "esbuild src/functions/*.ts --bundle --minify --platform=node --outdir=dist --format=cjs",
+    "build": "node esbuild.mjs",
     "prettier:check": "prettier . --check",
     "prettier:write": "prettier . --write",
     "test": "vitest"
