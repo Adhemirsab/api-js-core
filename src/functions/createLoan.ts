@@ -5,11 +5,17 @@ import { tryFn } from "../utilities/try-fn.js";
 export const handler = async (
   event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResultV2<unknown>> => {
-  const { n } = JSON.parse(event.body || "{ number: 2 }") as { n: number };
+  const { n } = JSON.parse(event.body || '{ "n": 2 }') as {
+    n: number;
+  };
 
-  const [ok, name] = await tryFn(() =>
-    axios.get(`https://rickandmortyapi.com/api/character/${n}`),
-  );
+  const [ok, name] = await tryFn(async () => {
+    const { data } = await axios.get<{ name: string }>(
+      `https://rickandmortyapi.com/api/character/${n}`,
+    );
+
+    return data.name;
+  });
 
   const result = {
     message: ok ? name : "NOONE",
