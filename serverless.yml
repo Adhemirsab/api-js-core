@@ -8,11 +8,17 @@ provider:
   architecture: arm64
   region: ${env:AWS_REGION}
   stage: ${env:STAGE}
+  httpApi:
+    cors: true
+    name: ${self:service}-${self:provider.stage}-api
 
 package:
   individually: true
-  patterns:
-    - "!**/*"
+  patterns: "!**/*"
+
+custom:
+  version: "v1"
+  prefix: ${self:service}-${self:provider.stage}
 
 functions:
   hello:
@@ -27,3 +33,21 @@ functions:
     handler: dist/dummy.handler
     package:
       patterns: "dist/dummy.js"
+
+resources:
+  Resources:
+    TransactionTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: ${self:custom.prefix}-transactiontable
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+          - AttributeName: "owner"
+            AttributeType: "S"
+          - AttributeName: "count"
+            AttributeType: "N"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        BillingMode: "PAY_PER_REQUEST"
