@@ -1,5 +1,7 @@
 export const handler = async () => {
-  return {
+  const result = {
     message: "world",
   };
+
+  return result;
 };

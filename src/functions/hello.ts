@@ -10,7 +10,9 @@ export const handler = async () => {
     return data.name;
   });
 
-  return {
+  const result = {
     message: ok ? name : "NOONE",
   };
+
+  return result;
 };
