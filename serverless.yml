@@ -14,24 +14,28 @@ provider:
 
 package:
   individually: true
-  patterns: "!**/*"
+  patterns: ["!**/*", "package.json"]
 
 custom:
   version: "v1"
   prefix: ${self:service}-${self:provider.stage}
 
 functions:
-  hello:
-    handler: dist/hello.handler
+  createLoan:
+    handler: dist/createLoan.handler
     package:
-      patterns: ["dist/hello.js", "package.json"]
+      patterns: dist/createLoan.js
+    events:
+      - httpApi:
+          method: POST
+          path: /${self:custom.version}/loans
 
 resources:
   Resources:
-    TransactionTable:
+    LoanTable:
       Type: "AWS::DynamoDB::Table"
       Properties:
-        TableName: ${self:custom.prefix}-transactiontable
+        TableName: ${self:custom.prefix}-loantable
         AttributeDefinitions:
           - AttributeName: "id"
             AttributeType: "S"

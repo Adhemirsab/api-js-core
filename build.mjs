@@ -14,4 +14,5 @@ await esbuild.build({
     const __dirname = (await import("node:path")).dirname(__filename);
     `,
   },
+  logLevel: "info",
 });

@@ -4,13 +4,14 @@
   "description": "core",
   "type": "module",
   "scripts": {
-    "build": "node esbuild.mjs",
+    "build": "node build.mjs",
     "prettier:check": "prettier . --check",
     "prettier:write": "prettier . --write",
     "test": "vitest"
   },
   "license": "ISC",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.122",
     "@types/node": "^20.6.5",
     "esbuild": "^0.19.3",
     "prettier": "^3.0.3"
