@@ -25,20 +25,6 @@ functions:
     handler: dist/hello.handler
     package:
       patterns: "dist/hello.js"
-    events:
-      - eventBridge:
-          schedule: rate(2 minutes)
-  world:
-    handler: dist/world.handler
-    package:
-      patterns: "dist/world.js"
-    events:
-      - eventBridge:
-          schedule: cron(0/2 * * * ? *)
-  dummy:
-    handler: dist/dummy.handler
-    package:
-      patterns: "dist/dummy.js"
 
 resources:
   Resources:
