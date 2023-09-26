@@ -43,10 +43,6 @@ resources:
         AttributeDefinitions:
           - AttributeName: "id"
             AttributeType: "S"
-          - AttributeName: "owner"
-            AttributeType: "S"
-          - AttributeName: "count"
-            AttributeType: "N"
         KeySchema:
           - AttributeName: "id"
             KeyType: "HASH"
