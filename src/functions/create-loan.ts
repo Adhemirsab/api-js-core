@@ -1,5 +1,5 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
-import { eventLog, middleware } from "../middleware/index.js";
+import { eventLog, middy } from "../middleware/index.js";
 import { parseJson } from "../utilities/parse-json.js";
 import { CreateLoanParams, Loan } from "../domain/loan/types.js";
 import { loanUseCase } from "../domain/loan/use-case.js";
@@ -19,4 +19,4 @@ const createLoanHandler = async (
   return loan;
 };
 
-export const handler = middleware(createLoanHandler).use(eventLog()).start();
+export const handler = middy(createLoanHandler).use(eventLog()).start();

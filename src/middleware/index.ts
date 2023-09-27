@@ -4,7 +4,7 @@ type Middleware<E, C, R> = (
   handler: AwsFunction<E, C, R>,
 ) => AwsFunction<E, C, R>;
 
-export const middleware = <E, C, R>(handler: AwsFunction<E, C, R>) => {
+export const middy = <E, C, R>(handler: AwsFunction<E, C, R>) => {
   const ms: Middleware<E, C, R>[] = [];
 
   const state = (middlewares: Middleware<E, C, R>[]) => {
