@@ -8,7 +8,8 @@
     "lint": "eslint src",
     "test": "vitest",
     "validate": "npm run format && npm run lint",
-    "build": "node build.mjs"
+    "build": "node build.mjs",
+    "deploy": "npx --yes serverless deploy"
   },
   "license": "ISC",
   "devDependencies": {
