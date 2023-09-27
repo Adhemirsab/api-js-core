@@ -12,7 +12,18 @@ provider:
     cors: true
     name: ${self:service}-${self:provider.stage}-api
   environment:
-    LOAN_TABLE_NAME: !Ref LoanTable
+    ENV_LOAN_TABLE_NAME: !Ref LoanTable
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - lambda:*
+            - s3:*
+            - dynamodb:*
+            - ssm:*
+            - sqs:*
+          Resource: "*"
 
 package:
   individually: true

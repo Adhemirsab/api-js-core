@@ -8,7 +8,7 @@ export const loanRepository = (): LoanRepository => ({
     const ddbDocClient = DynamoDBDocumentClient.from(client);
 
     const command = new PutCommand({
-      TableName: process.env.LOAN_TABLE_NAME,
+      TableName: process.env.ENV_LOAN_TABLE_NAME,
       Item: loan,
     });
 
