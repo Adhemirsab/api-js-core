@@ -22,9 +22,9 @@ custom:
 
 functions:
   createLoan:
-    handler: dist/createLoan.handler
+    handler: dist/create-loan.handler
     package:
-      patterns: dist/createLoan.js
+      patterns: dist/create-loan.js
     events:
       - httpApi:
           method: POST
