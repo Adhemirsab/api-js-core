@@ -1,8 +1,9 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import axios from "axios";
 import { tryFn } from "../utilities/try-fn.js";
+import { eventLog } from "../middleware/index.js";
 
-export const handler = async (
+const createLoanHandler = async (
   event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResultV2<unknown>> => {
   const { n } = JSON.parse(event.body || '{ "n": 2 }') as {
@@ -25,3 +26,9 @@ export const handler = async (
 
   return result;
 };
+
+export const handler = eventLog<
+  APIGatewayProxyEventV2,
+  unknown,
+  APIGatewayProxyResultV2<unknown>
+>()(createLoanHandler);
