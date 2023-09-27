@@ -1,12 +1,12 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import axios from "axios";
 import { tryFn } from "../utilities/try-fn.js";
-import { eventLog } from "../middleware/index.js";
+import { eventLog, middleware } from "../middleware/index.js";
 
 const createLoanHandler = async (
   event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResultV2<unknown>> => {
-  const { n } = JSON.parse(event.body || '{ "n": 2 }') as {
+  const { n } = JSON.parse(event.body || "{}") as {
     n: number;
   };
 
@@ -14,6 +14,8 @@ const createLoanHandler = async (
     const { data } = await axios.get<{ name: string }>(
       `https://rickandmortyapi.com/api/character/${n}`,
     );
+
+    console.log(data);
 
     return data.name;
   });
@@ -25,8 +27,4 @@ const createLoanHandler = async (
   return result;
 };
 
-export const handler = eventLog<
-  APIGatewayProxyEventV2,
-  unknown,
-  APIGatewayProxyResultV2<unknown>
->()(createLoanHandler);
+export const handler = middleware(createLoanHandler).use(eventLog()).start();

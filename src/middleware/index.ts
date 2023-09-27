@@ -4,6 +4,22 @@ type Middleware<E, C, R> = (
   handler: AwsFunction<E, C, R>,
 ) => AwsFunction<E, C, R>;
 
+export const middleware = <E, C, R>(handler: AwsFunction<E, C, R>) => {
+  const ms: Middleware<E, C, R>[] = [];
+
+  const state = (middlewares: Middleware<E, C, R>[]) => {
+    const use = (middleware: Middleware<E, C, R>) =>
+      state([...middlewares, middleware]);
+
+    const start = (): AwsFunction<E, C, R> =>
+      middlewares.reduceRight((next, middleware) => middleware(next), handler);
+
+    return { use, start };
+  };
+
+  return state(ms);
+};
+
 export const eventLog = <E, C, R>(): Middleware<E, C, R> => {
   return (handler: AwsFunction<E, C, R>) =>
     async (event: E, context: C): Promise<R> => {
