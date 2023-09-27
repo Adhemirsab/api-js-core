@@ -7,7 +7,7 @@ export const loanUseCase = (
   createLoan: async ({ name, amount, startAt, count, type }) => {
     const id = idRepository.generateID();
 
-    return await loanRepository.createLoan({
+    return await loanRepository.saveLoanAndSchedules({
       id,
       name,
       amount,

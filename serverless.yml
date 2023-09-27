@@ -11,6 +11,8 @@ provider:
   httpApi:
     cors: true
     name: ${self:service}-${self:provider.stage}-api
+  environment:
+    LOAN_TABLE_NAME: !Ref LoanTable
 
 package:
   individually: true
