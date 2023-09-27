@@ -9,6 +9,6 @@ import { HEADERS } from "../utilities/constants.js";
 
 export const handler = middy(createLoanHandler)
   .use(eventLog())
-  .use(httpHeaders(HEADERS.Cors, HEADERS.Json))
+  .use(httpHeaders(HEADERS.Json))
   .use(httpError())
   .start();
