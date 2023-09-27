@@ -1,4 +1,4 @@
-import { UUIDRepository } from "../domain/loan/ports.js";
+import { UUIDRepository } from "../../domain/loan/ports.js";
 
 export const uuidRepository = (): UUIDRepository => ({
   generateUUID: () => {
