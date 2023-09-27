@@ -4,8 +4,8 @@ export interface LoanService {
   createLoan: (params: CreateLoanParams) => Promise<Loan>;
 }
 
-export interface UUIDRepository {
-  generateUUID: () => string;
+export interface IDRepository {
+  generateID: () => string;
 }
 
 export interface LoanRepository {

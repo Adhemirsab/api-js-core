@@ -1,11 +1,11 @@
-import { LoanService, UUIDRepository, LoanRepository } from "./ports.js";
+import { LoanService, IDRepository, LoanRepository } from "./ports.js";
 
 export const loanUseCase = (
-  uuidRepository: UUIDRepository,
+  idRepository: IDRepository,
   loanRepository: LoanRepository,
 ): LoanService => ({
   createLoan: async ({ name, amount, startAt, count, type }) => {
-    const id = uuidRepository.generateUUID();
+    const id = idRepository.generateID();
 
     return await loanRepository.createLoan({
       id,
