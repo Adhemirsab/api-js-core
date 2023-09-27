@@ -1,9 +1,8 @@
 import {
   APIGatewayProxyEventV2,
-  APIGatewayProxyResultV2,
   APIGatewayProxyStructuredResultV2,
 } from "aws-lambda";
-import { CreateLoanParams, Loan } from "../../domain/loan/types.js";
+import { CreateLoanParams } from "../../domain/loan/types.js";
 import { tryParseJson } from "../../utilities/parse-json.js";
 import { uuidRepository } from "../output/uuid-repository.js";
 import { loanRepository } from "../output/loan-repository.js";
