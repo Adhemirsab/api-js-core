@@ -1,16 +1,29 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
+import {
+  APIGatewayProxyEventV2,
+  APIGatewayProxyResultV2,
+  APIGatewayProxyStructuredResultV2,
+} from "aws-lambda";
 import { CreateLoanParams, Loan } from "../../domain/loan/types.js";
 import { tryParseJson } from "../../utilities/parse-json.js";
 import { uuidRepository } from "../output/uuid-repository.js";
 import { loanRepository } from "../output/loan-repository.js";
 import { loanUseCase } from "../../domain/loan/use-case.js";
 
+const response = <T>(
+  code: number,
+  body: T,
+): APIGatewayProxyStructuredResultV2 => ({
+  statusCode: code,
+  body: JSON.stringify(body),
+});
+
 export const createLoanHandler = async (
   event: APIGatewayProxyEventV2,
-): Promise<APIGatewayProxyResultV2<Loan>> => {
+): Promise<APIGatewayProxyStructuredResultV2> => {
   const [ok, body, error] = tryParseJson<CreateLoanParams>(event.body);
   if (!ok) {
-    return { statusCode: 400, body: JSON.stringify({ error }) };
+    console.log("createLoanHandler", error);
+    return response(400, { message: "Invalid body" });
   }
 
   const uuidRepo = uuidRepository();
@@ -18,5 +31,5 @@ export const createLoanHandler = async (
 
   const loan = await loanUseCase(uuidRepo, loanRepo).createLoan(body);
 
-  return loan;
+  return response(201, loan);
 };

@@ -1,8 +1,10 @@
+import { APIGatewayProxyStructuredResultV2 } from "aws-lambda";
+import { tryFn } from "../utilities/try-fn.js";
+import { getErrorMessage } from "../utilities/unkown.js";
+
 type AwsFunction<E, C, R> = (event: E, context: C) => Promise<R>;
 
-type Middleware<E, C, R> = (
-  handler: AwsFunction<E, C, R>,
-) => AwsFunction<E, C, R>;
+type Middleware<E, C, R> = (next: AwsFunction<E, C, R>) => AwsFunction<E, C, R>;
 
 export const middy = <E, C, R>(handler: AwsFunction<E, C, R>) => {
   const ms: Middleware<E, C, R>[] = [];
@@ -21,16 +23,58 @@ export const middy = <E, C, R>(handler: AwsFunction<E, C, R>) => {
 };
 
 export const eventLog = <E, C, R>(): Middleware<E, C, R> => {
-  return (handler: AwsFunction<E, C, R>) =>
-    async (event: E, context: C): Promise<R> => {
-      console.log("event", JSON.stringify(event, null, 2));
-      console.log("context", JSON.stringify(context, null, 2));
-      console.log("env", JSON.stringify(process.env, null, 2));
+  return (next) => async (event, context) => {
+    console.log("event", JSON.stringify(event, null, 2));
+    console.log("context", JSON.stringify(context, null, 2));
+    console.log("env", JSON.stringify(process.env, null, 2));
 
-      const result = await handler(event, context);
+    const result = await next(event, context);
 
-      console.log("result", JSON.stringify(result, null, 2));
+    console.log("result", JSON.stringify(result, null, 2));
 
-      return result;
+    return result;
+  };
+};
+
+export const httpHeaders = <E, C>(
+  ...headers: APIGatewayProxyStructuredResultV2["headers"][]
+): Middleware<E, C, APIGatewayProxyStructuredResultV2> => {
+  return (next) => async (event, context) => {
+    const result = await next(event, context);
+
+    const composeHeaders = headers.reduce<
+      APIGatewayProxyStructuredResultV2["headers"]
+    >((result, header) => {
+      return { ...result, ...header };
+    }, {});
+
+    result.headers = {
+      ...result.headers,
+      ...composeHeaders,
     };
+
+    return result;
+  };
+};
+
+export const httpError = <E, C>(): Middleware<
+  E,
+  C,
+  APIGatewayProxyStructuredResultV2
+> => {
+  return (next) => async (event, context) => {
+    const [ok, result, error] = await tryFn(() => next(event, context));
+    if (ok) {
+      return result;
+    }
+
+    const body = {
+      message: ["unhandled error", getErrorMessage(error)].join(": "),
+    };
+
+    return {
+      statusCode: 500,
+      body: JSON.stringify(body),
+    };
+  };
 };
