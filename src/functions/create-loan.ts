@@ -1,29 +1,22 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
-import axios from "axios";
-import { tryFn } from "../utilities/try-fn.js";
 import { eventLog, middleware } from "../middleware/index.js";
 import { parseJson } from "../utilities/parse-json.js";
+import { CreateLoanParams, Loan } from "../domain/loan/types.js";
+import { loanUseCase } from "../domain/loan/use-case.js";
+import { uuidRepository } from "../adapter/uuid-repository.js";
+import { loanRepository } from "../adapter/loan-repository.js";
 
 const createLoanHandler = async (
   event: APIGatewayProxyEventV2,
-): Promise<APIGatewayProxyResultV2<unknown>> => {
-  const { n } = parseJson<{ n: number }>(event.body);
+): Promise<APIGatewayProxyResultV2<Loan>> => {
+  const body = parseJson<CreateLoanParams>(event.body);
 
-  const [ok, name] = await tryFn(async () => {
-    const { data } = await axios.get<{ name: string }>(
-      `https://rickandmortyapi.com/api/character/${n}`,
-    );
+  const uuidRepo = uuidRepository();
+  const loanRepo = loanRepository();
 
-    console.log(data);
+  const loan = await loanUseCase(uuidRepo, loanRepo).createLoan(body);
 
-    return data.name;
-  });
-
-  const result = {
-    message: ok ? name : "BRUH",
-  };
-
-  return result;
+  return loan;
 };
 
 export const handler = middleware(createLoanHandler).use(eventLog()).start();
