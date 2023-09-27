@@ -19,10 +19,8 @@ const createLoanHandler = async (
   });
 
   const result = {
-    message: ok ? name : "NOONE",
+    message: ok ? name : "BRUH",
   };
-
-  console.log(JSON.stringify(result, null, 2));
 
   return result;
 };
