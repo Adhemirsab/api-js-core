@@ -9,7 +9,7 @@ const SECONDS_GRACE_PERIOD = 60;
 
 export const loanSchedulerRepository = (): LoanSchedulerRepository => ({
   createLoanSchedule: async (loan) => {
-    const client = new SchedulerClient({ logger: console });
+    const client = new SchedulerClient();
 
     const start = loan.startAt;
     const end = start + SECONDS_GRACE_PERIOD + minutesToSeconds(5) * loan.count;

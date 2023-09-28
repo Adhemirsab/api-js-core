@@ -4,7 +4,7 @@ import { LoanTableRepository } from "../../domain/loan/ports.js";
 
 export const loanTableRepository = (): LoanTableRepository => ({
   saveLoan: async (loan) => {
-    const client = new DynamoDBClient({ logger: console });
+    const client = new DynamoDBClient();
     const ddbDocClient = DynamoDBDocumentClient.from(client);
 
     const command = new PutCommand({
