@@ -11,10 +11,6 @@ provider:
   httpApi:
     cors: true
     name: ${self:service}-${self:provider.stage}-api
-  environment:
-    ENV_LOAN_TABLE_NAME: !Ref LoanTable
-    ENV_NOTIFICATION_FUNCTION_ARN: !GetAtt DummyLambdaFunction.Arn
-    ENV_SCHEDULER_ROLE_ARN: !GetAtt SchedulerRole.Arn
   iam:
     role:
       statements:
@@ -36,6 +32,10 @@ custom:
   prefix: ${self:service}-${self:provider.stage}
 
 functions:
+  dummy:
+    handler: dist/dummy.handler
+    package:
+      patterns: dist/dummy.js
   createLoan:
     handler: dist/create-loan.handler
     package:
@@ -44,10 +44,10 @@ functions:
       - httpApi:
           method: POST
           path: /${self:custom.version}/loans
-  dummy:
-    handler: dist/dummy.handler
-    package:
-      patterns: dist/dummy.js
+    environment:
+      ENV_LOAN_TABLE_NAME: !Ref LoanTable
+      ENV_NOTIFICATION_FUNCTION_ARN: !GetAtt DummyLambdaFunction.Arn
+      ENV_SCHEDULER_ROLE_ARN: !GetAtt SchedulerRole.Arn
 
 resources:
   Resources:
