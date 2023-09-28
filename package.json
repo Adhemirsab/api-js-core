@@ -10,7 +10,8 @@
     "test": "vitest",
     "validate": "npm run format && npm run lint",
     "build": "node build.mjs",
-    "deploy": "npx --yes serverless deploy"
+    "deploy": "npx --yes serverless deploy",
+    "package": "AWS_REGION=\"us-east-1\" STAGE=\"qa\" npx --yes serverless package"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.122",
