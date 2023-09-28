@@ -22,7 +22,7 @@ export const createLoanHandler = async (
 ): Promise<APIGatewayProxyStructuredResultV2> => {
   const [ok, body, error] = tryParseJson<CreateLoanParams>(event.body);
   if (!ok) {
-    console.log("createLoanHandler", error);
+    console.log("createLoanHandler |", error);
     return response(400, { message: "Invalid body" });
   }
 

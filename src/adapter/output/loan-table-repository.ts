@@ -14,7 +14,7 @@ export const loanTableRepository = (): LoanTableRepository => ({
 
     const result = await ddbDocClient.send(command);
 
-    console.log("createLoan | ", JSON.stringify(result, null, 2));
+    console.log("createLoan |", JSON.stringify(result, null, 2));
 
     return loan;
   },

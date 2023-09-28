@@ -24,13 +24,13 @@ export const middy = <E, C, R>(handler: AwsFunction<E, C, R>) => {
 
 export const eventLog = <E, C, R>(): Middleware<E, C, R> => {
   return (next) => async (event, context) => {
-    console.log("event", JSON.stringify(event, null, 2));
-    console.log("context", JSON.stringify(context, null, 2));
-    console.log("env", JSON.stringify(process.env, null, 2));
+    console.log("event |", JSON.stringify(event, null, 2));
+    console.log("context |", JSON.stringify(context, null, 2));
+    console.log("env |", JSON.stringify(process.env, null, 2));
 
     const result = await next(event, context);
 
-    console.log("result", JSON.stringify(result, null, 2));
+    console.log("result |", JSON.stringify(result, null, 2));
 
     return result;
   };
