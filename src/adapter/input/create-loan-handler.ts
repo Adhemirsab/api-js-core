@@ -5,8 +5,9 @@ import {
 import { CreateLoanParams } from "../../domain/loan/types.js";
 import { tryParseJson } from "../../utilities/parse-json.js";
 import { idRepository } from "../output/id-repository.js";
-import { loanRepository } from "../output/loan-repository.js";
+import { loanTableRepository } from "../output/loan-table-repository.js";
 import { loanUseCase } from "../../domain/loan/use-case.js";
+import { loanSchedulerRepository } from "../output/loan-scheduler-repository.js";
 
 const response = <T>(
   code: number,
@@ -26,9 +27,14 @@ export const createLoanHandler = async (
   }
 
   const idRepo = idRepository();
-  const loanRepo = loanRepository();
+  const loanTableRepo = loanTableRepository();
+  const loanSchedulerRepo = loanSchedulerRepository();
 
-  const loan = await loanUseCase(idRepo, loanRepo).createLoan(body);
+  const loan = await loanUseCase(
+    idRepo,
+    loanTableRepo,
+    loanSchedulerRepo,
+  ).createLoan(body);
 
   return response(201, loan);
 };

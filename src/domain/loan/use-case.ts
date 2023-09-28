@@ -1,19 +1,22 @@
-import { LoanService, IDRepository, LoanRepository } from "./ports.js";
+import {
+  LoanService,
+  IDRepository,
+  LoanTableRepository,
+  LoanSchedulerRepository,
+} from "./ports.js";
 
 export const loanUseCase = (
   idRepository: IDRepository,
-  loanRepository: LoanRepository,
+  loanTableRepository: LoanTableRepository,
+  loanSchedulerRepository: LoanSchedulerRepository,
 ): LoanService => ({
-  createLoan: async ({ name, amount, startAt, count, type }) => {
+  createLoan: async (params) => {
     const id = idRepository.generateID();
 
-    return await loanRepository.saveLoanAndSchedules({
-      id,
-      name,
-      amount,
-      startAt,
-      count,
-      type,
-    });
+    const loan = await loanTableRepository.saveLoan({ id, ...params });
+
+    await loanSchedulerRepository.createLoanSchedule(loan);
+
+    return loan;
   },
 });

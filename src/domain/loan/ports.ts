@@ -10,6 +10,10 @@ export interface IDRepository {
   generateID: () => string;
 }
 
-export interface LoanRepository {
-  saveLoanAndSchedules: (loan: Loan) => Promise<Loan>;
+export interface LoanTableRepository {
+  saveLoan: (loan: Loan) => Promise<Loan>;
+}
+
+export interface LoanSchedulerRepository {
+  createLoanSchedule: (loan: Loan) => Promise<boolean>;
 }

@@ -1,10 +1,10 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { LoanRepository } from "../../domain/loan/ports.js";
+import { LoanTableRepository } from "../../domain/loan/ports.js";
 
-export const loanRepository = (): LoanRepository => ({
-  saveLoanAndSchedules: async (loan) => {
-    const client = new DynamoDBClient();
+export const loanTableRepository = (): LoanTableRepository => ({
+  saveLoan: async (loan) => {
+    const client = new DynamoDBClient({ logger: console });
     const ddbDocClient = DynamoDBDocumentClient.from(client);
 
     const command = new PutCommand({
