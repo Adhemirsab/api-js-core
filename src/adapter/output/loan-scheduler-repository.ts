@@ -17,7 +17,7 @@ export const loanSchedulerRepository = (): LoanSchedulerRepository => ({
     const command = new CreateScheduleCommand({
       Name: loan.id,
       Description: `schedule for loan ${loan.id}`,
-      ScheduleExpression: `cron(0/5 0 * * ? *)`,
+      ScheduleExpression: `cron(0/5 * * * ? *)`,
       FlexibleTimeWindow: { Mode: "OFF" },
       Target: {
         Arn: process.env.ENV_NOTIFICATION_FUNCTION_ARN,
