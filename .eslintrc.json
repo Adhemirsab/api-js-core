@@ -9,5 +9,11 @@
     "project": true,
     "tsconfigRootDir": "__dirname"
   },
+  "overrides": [
+    {
+      "files": ["*.js", "*.mjs"],
+      "extends": ["plugin:@typescript-eslint/disable-type-checked"]
+    }
+  ],
   "root": true
 }
