@@ -34,10 +34,10 @@ custom:
   prefix: ${self:service}-${self:provider.stage}
 
 functions:
-  dummy:
-    handler: dist/dummy.handler
+  notification:
+    handler: dist/notification.handler
     package:
-      patterns: dist/dummy.js
+      patterns: dist/notification.js
   createLoan:
     handler: dist/create-loan.handler
     package:
@@ -48,7 +48,7 @@ functions:
           path: /${self:custom.version}/loans
     environment:
       ENV_LOAN_TABLE_NAME: !Ref LoanTable
-      ENV_NOTIFICATION_FUNCTION_ARN: !GetAtt DummyLambdaFunction.Arn
+      ENV_NOTIFICATION_FUNCTION_ARN: !GetAtt NotificationLambdaFunction.Arn
       ENV_SCHEDULER_ROLE_ARN: !GetAtt SchedulerRole.Arn
 
 resources:

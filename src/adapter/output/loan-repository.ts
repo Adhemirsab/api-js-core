@@ -1,8 +1,9 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { LoanTableRepository } from "../../domain/loan/ports.js";
+import { LoanRepository } from "../../domain/loan/ports.js";
+import { tryFn } from "../../domain/lib/try-fn.js";
 
-export const loanTableRepository = (): LoanTableRepository => ({
+export const loanRepository = (): LoanRepository => ({
   saveLoan: async (loan) => {
     const client = new DynamoDBClient();
     const ddbDocClient = DynamoDBDocumentClient.from(client);
@@ -12,8 +13,11 @@ export const loanTableRepository = (): LoanTableRepository => ({
       Item: loan,
     });
 
-    await ddbDocClient.send(command);
+    const [ok, _, error] = await tryFn(() => ddbDocClient.send(command));
+    if (!ok) {
+      return [false, undefined, error];
+    }
 
-    return loan;
+    return [true, loan, undefined];
   },
 });

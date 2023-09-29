@@ -1,6 +1,6 @@
 import { APIGatewayProxyStructuredResultV2 } from "aws-lambda";
-import { tryFn } from "../utilities/try-fn.js";
 import { getErrorMessage } from "../utilities/unkown.js";
+import { tryFn } from "../domain/lib/try-fn.js";
 
 type AwsFunction<E, C, R> = (event: E, context: C) => Promise<R>;
 

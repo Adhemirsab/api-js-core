@@ -1,11 +1,12 @@
-export type LoanType = "monthly" | "weekly" | "daily";
+export type FrecuencyType = "monthly" | "weekly" | "daily";
 
 export type CreateLoanParams = {
   name: string;
   amount: number;
   startAt: number;
-  count: number;
-  type: LoanType;
+  times: number;
+  type: FrecuencyType;
+  timezoneOffsetMinutes: number;
 };
 
 export type Loan = {
@@ -13,6 +14,7 @@ export type Loan = {
   name: string;
   amount: number;
   startAt: number;
-  count: number;
-  type: LoanType;
+  times: number;
+  type: FrecuencyType;
+  timezoneOffsetMinutes: number;
 };

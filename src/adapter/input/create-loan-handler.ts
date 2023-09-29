@@ -5,9 +5,15 @@ import {
 import { CreateLoanParams } from "../../domain/loan/types.js";
 import { tryParseJson } from "../../utilities/parse-json.js";
 import { idRepository } from "../output/id-repository.js";
-import { loanTableRepository } from "../output/loan-table-repository.js";
 import { loanUseCase } from "../../domain/loan/use-case.js";
-import { loanSchedulerRepository } from "../output/loan-scheduler-repository.js";
+import { loanRepository } from "../output/loan-repository.js";
+import { schedulerRepository } from "../output/scheduler-repository.js";
+import { isCustomError } from "../../domain/lib/custom-error.js";
+
+const failure = (error: Error): APIGatewayProxyStructuredResultV2 => ({
+  statusCode: isCustomError(error) ? error.statusCode : 500,
+  body: JSON.stringify({ message: error.message }),
+});
 
 const response = <T>(
   code: number,
@@ -17,24 +23,47 @@ const response = <T>(
   body: JSON.stringify(body),
 });
 
+const validateBody = (body: unknown): body is CreateLoanParams => {
+  if (typeof body !== "object" || body === null) return false;
+
+  const { name, amount, startAt, times, type, timezoneOffsetMinutes } =
+    body as Record<string, unknown>;
+
+  if (typeof name !== "string") return false;
+  if (typeof amount !== "number" || amount < 0) return false;
+  if (typeof startAt !== "number" || amount < 0) return false;
+  if (typeof times !== "number" || amount < 0) return false;
+  if (typeof type !== "string" || ["monthly", "weekly", "daily"].includes(type))
+    return false;
+  if (typeof timezoneOffsetMinutes !== "number") return false;
+
+  return true;
+};
+
 export const createLoanHandler = async (
   event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyStructuredResultV2> => {
-  const [ok, body, error] = tryParseJson<CreateLoanParams>(event.body);
+  const [ok, body, error] = tryParseJson<CreateLoanParams>(
+    event.body,
+    validateBody,
+  );
   if (!ok) {
-    console.log("createLoanHandler |", error);
-    return response(400, { message: "Invalid body" });
+    return failure(error);
   }
 
   const idRepo = idRepository();
-  const loanTableRepo = loanTableRepository();
-  const loanSchedulerRepo = loanSchedulerRepository();
+  const loanRepo = loanRepository();
+  const schedulerRepo = schedulerRepository();
 
-  const loan = await loanUseCase(
+  const [loanOk, loan, loanError] = await loanUseCase(
     idRepo,
-    loanTableRepo,
-    loanSchedulerRepo,
+    loanRepo,
+    schedulerRepo,
   ).createLoan(body);
+
+  if (!loanOk) {
+    return failure(loanError);
+  }
 
   return response(201, loan);
 };
