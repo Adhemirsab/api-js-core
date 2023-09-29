@@ -45,7 +45,7 @@ export const loanUseCase = (
     const [schedulerOk, _, schedulerError] =
       await schedulerRepository.createSchedule(
         loan.id,
-        loan.startAt,
+        startAt,
         endAt,
         loan.type,
         loan,
