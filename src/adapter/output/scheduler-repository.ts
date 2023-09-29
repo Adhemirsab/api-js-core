@@ -2,20 +2,25 @@ import {
   SchedulerClient,
   CreateScheduleCommand,
 } from "@aws-sdk/client-scheduler";
-import { epochToMillis } from "../../utilities/time.js";
+import { epochToMillis, epochToUTC } from "../../utilities/time.js";
 import { SchedulerRepository } from "../../domain/loan/ports.js";
 import { tryFn } from "../../domain/lib/try-fn.js";
 import { FrecuencyType } from "../../domain/loan/types.js";
 
-const cronMap: Record<FrecuencyType, string> = {
-  daily: "cron(0 0 * * ? *)",
-  weekly: "cron(0 0 ? * MON *)",
-  monthly: "cron(0 0 1 * ? *)",
+const cronMap = (epochStartAt: number): Record<FrecuencyType, string> => {
+  const { minutes, hours, dayOfTheMonth, dayOfTheWeek } =
+    epochToUTC(epochStartAt);
+
+  return {
+    daily: `cron(${minutes} ${hours} * * ? *)`,
+    weekly: `cron(${minutes} ${hours} ? * ${dayOfTheWeek} *)`,
+    monthly: `cron(${minutes} ${hours} ${dayOfTheMonth} * ? *)`,
+  };
 };
 
 export const schedulerRepository = (): SchedulerRepository => ({
   createSchedule: async (id, startAt, endAt, frecuencyType, payload) => {
-    const cronExpression = cronMap[frecuencyType];
+    const cronExpression = cronMap(startAt)[frecuencyType];
 
     const client = new SchedulerClient();
 

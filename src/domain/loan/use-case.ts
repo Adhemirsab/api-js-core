@@ -1,5 +1,4 @@
-import { CustomError } from "../lib/custom-error.js";
-import { getCurrentEpoch, withEpoch } from "../lib/epoch.js";
+import { withEpoch } from "../lib/epoch.js";
 import {
   LoanService,
   IDRepository,
@@ -14,16 +13,6 @@ export const loanUseCase = (
   schedulerRepository: SchedulerRepository,
 ): LoanService => ({
   createLoan: async (params) => {
-    const currentEpoch = getCurrentEpoch();
-
-    if (params.startAt < currentEpoch) {
-      return [
-        false,
-        undefined,
-        new CustomError(400, "start date must be greater than current date"),
-      ];
-    }
-
     const id = idRepository.generateID();
 
     const [ok, loan, error] = await loanRepository.saveLoan({ id, ...params });
@@ -36,19 +25,22 @@ export const loanUseCase = (
       times: number,
       frecuencyType: FrecuencyType,
     ): number => {
-      const operator = withEpoch(startAt);
-
       switch (frecuencyType) {
         case "daily":
-          return operator.addDays(times).toEpoch();
+          return withEpoch(startAt).addDays(times).toEpoch();
         case "weekly":
-          return operator.addWeeks(times).toEpoch();
+          return withEpoch(startAt).addWeeks(times).toEpoch();
         case "monthly":
-          return operator.addMonths(times).toEpoch();
+          return withEpoch(startAt).addMonths(times).toEpoch();
       }
     };
 
-    const endAt = addTime(loan.startAt, loan.times, loan.type);
+    const startAt = withEpoch(loan.startAt)
+      .addDays(1)
+      .setHoursMinutesSeconds(0, 720 + loan.timezoneOffsetMinutes, 0)
+      .toEpoch();
+
+    const endAt = addTime(startAt, loan.times, loan.type);
 
     const [schedulerOk, _, schedulerError] =
       await schedulerRepository.createSchedule(

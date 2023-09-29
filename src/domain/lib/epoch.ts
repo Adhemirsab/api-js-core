@@ -20,5 +20,18 @@ export const withEpoch = (epoch: number) => ({
 
     return withEpoch(getEpochFromDate(date));
   },
+  setHoursMinutesSeconds: (
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+  ) => {
+    const date = new Date(epoch * 1000);
+
+    if (hours !== undefined) date.setUTCHours(hours);
+    if (minutes !== undefined) date.setUTCMinutes(minutes);
+    if (seconds !== undefined) date.setUTCSeconds(seconds);
+
+    return withEpoch(getEpochFromDate(date));
+  },
   toEpoch: () => epoch,
 });
