@@ -33,7 +33,7 @@ const validateBody = (body: unknown): body is CreateLoanParams => {
   if (typeof amount !== "number" || amount < 0) return false;
   if (typeof startAt !== "number" || amount < 0) return false;
   if (typeof times !== "number" || amount < 0) return false;
-  if (typeof type !== "string" || ["monthly", "weekly", "daily"].includes(type))
+  if (typeof type !== "string" || !["monthly", "weekly", "daily"].includes(type))
     return false;
   if (typeof timezoneOffsetMinutes !== "number") return false;
 
