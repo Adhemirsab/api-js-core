@@ -28,7 +28,7 @@ export const schedulerRepository = (): SchedulerRepository => ({
       Name: id,
       Description: `schedule for item ${id}`,
       ScheduleExpression: cronExpression,
-      FlexibleTimeWindow: { Mode: "OFF" },
+      FlexibleTimeWindow: { Mode: "FLEXIBLE", MaximumWindowInMinutes: 60 },
       Target: {
         Arn: process.env.ENV_NOTIFICATION_FUNCTION_ARN,
         RoleArn: process.env.ENV_SCHEDULER_ROLE_ARN,
@@ -37,10 +37,11 @@ export const schedulerRepository = (): SchedulerRepository => ({
           MaximumRetryAttempts: 2,
         },
       },
-      ActionAfterCompletion: "NONE", // TODO: change to DELETE
+      ActionAfterCompletion: "DELETE",
       State: "ENABLED",
       StartDate: new Date(epochToMillis(startAt)),
       EndDate: new Date(epochToMillis(endAt)),
+      GroupName: process.env.ENV_SCHEDULE_GROUP_NAME,
     });
 
     const [ok, _, error] = await tryFn(() => client.send(command));

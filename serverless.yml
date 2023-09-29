@@ -11,6 +11,8 @@ provider:
   httpApi:
     cors: true
     name: ${self:service}-${self:provider.stage}-api
+  environment:
+    ENV_PREFIX: ${self:service}-${self:provider.stage}
   iam:
     role:
       statements:
@@ -50,6 +52,7 @@ functions:
       ENV_LOAN_TABLE_NAME: !Ref LoanTable
       ENV_NOTIFICATION_FUNCTION_ARN: !GetAtt NotificationLambdaFunction.Arn
       ENV_SCHEDULER_ROLE_ARN: !GetAtt SchedulerRole.Arn
+      ENV_SCHEDULE_GROUP_NAME: !Ref CoreScheduleGroup
 
 resources:
   Resources:
@@ -64,6 +67,20 @@ resources:
           - AttributeName: "id"
             KeyType: "HASH"
         BillingMode: "PAY_PER_REQUEST"
+
+    CoreScheduleGroup:
+      Type: "AWS::Scheduler::ScheduleGroup"
+      Properties:
+        Name: ${self:custom.prefix}-scheduler
+        Tags:
+          - Key: Service
+            Value: ${self:service}
+          - Key: Stage
+            Value: ${self:provider.stage}
+          - Key: Prefix
+            Value: ${self:custom.prefix}
+          - Key: Version
+            Value: ${self:custom.version}
 
     SchedulerRole:
       Type: "AWS::IAM::Role"

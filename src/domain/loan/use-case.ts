@@ -7,6 +7,39 @@ import {
 } from "./ports.js";
 import { FrecuencyType } from "./types.js";
 
+const getStartEnd = (
+  initStartAt: number,
+  times: number,
+  frecuencyType: FrecuencyType,
+): [startAt: number, endAt: number] => {
+  switch (frecuencyType) {
+    case "daily": {
+      const startAt = withEpoch(initStartAt).addDays(1).toEpoch();
+      const endAt = withEpoch(startAt)
+        .addDays(times - 1)
+        .toEpoch();
+
+      return [startAt, endAt];
+    }
+    case "weekly": {
+      const startAt = withEpoch(initStartAt).addWeeks(1).toEpoch();
+      const endAt = withEpoch(startAt)
+        .addWeeks(times - 1)
+        .toEpoch();
+
+      return [startAt, endAt];
+    }
+    case "monthly": {
+      const startAt = withEpoch(initStartAt).addMonths(1).toEpoch();
+      const endAt = withEpoch(startAt)
+        .addMonths(times - 1)
+        .toEpoch();
+
+      return [startAt, endAt];
+    }
+  }
+};
+
 export const loanUseCase = (
   idRepository: IDRepository,
   loanRepository: LoanRepository,
@@ -20,27 +53,12 @@ export const loanUseCase = (
       return [false, undefined, error];
     }
 
-    const addTime = (
-      startAt: number,
-      times: number,
-      frecuencyType: FrecuencyType,
-    ): number => {
-      switch (frecuencyType) {
-        case "daily":
-          return withEpoch(startAt).addDays(times).toEpoch();
-        case "weekly":
-          return withEpoch(startAt).addWeeks(times).toEpoch();
-        case "monthly":
-          return withEpoch(startAt).addMonths(times).toEpoch();
-      }
-    };
-
-    const startAt = withEpoch(loan.startAt)
+    const initStartAt = withEpoch(loan.startAt)
       .addDays(1)
       .setHoursMinutesSeconds(0, 720 + loan.timezoneOffsetMinutes, 0)
       .toEpoch();
 
-    const endAt = addTime(startAt, loan.times, loan.type);
+    const [startAt, endAt] = getStartEnd(initStartAt, loan.times, loan.type);
 
     const [schedulerOk, _, schedulerError] =
       await schedulerRepository.createSchedule(

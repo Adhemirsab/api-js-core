@@ -30,7 +30,7 @@ const validateBody = (body: unknown): body is CreateLoanParams => {
     body as Record<string, unknown>;
 
   if (typeof name !== "string") return false;
-  if (typeof amount !== "number" || amount < 0) return false;
+  if (typeof amount !== "number" || amount < 1) return false;
   if (typeof startAt !== "number" || amount < 0) return false;
   if (typeof times !== "number" || amount < 0) return false;
   if (
