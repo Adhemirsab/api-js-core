@@ -27,6 +27,7 @@
     "@aws-sdk/client-dynamodb": "^3.421.0",
     "@aws-sdk/client-scheduler": "^3.421.0",
     "@aws-sdk/lib-dynamodb": "^3.421.0",
+    "axios": "^1.5.1",
     "ulidx": "^2.1.0"
   }
 }
