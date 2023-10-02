@@ -1,4 +1,6 @@
-export type Response<D> = [true, D, undefined] | [false, undefined, Error];
+export type Response<D> =
+  | [ok: true, data: D, error: undefined]
+  | [ok: false, data: undefined, error: Error];
 
 export const isError = (error: unknown): error is Error => {
   return error instanceof Error;

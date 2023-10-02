@@ -13,3 +13,7 @@ export interface NotificationService {
 export interface DiscordRepository {
   sendDiscord: (message: string) => Promise<Response<boolean>>;
 }
+
+export interface WhatssappRepository {
+  sendWhatsapp: (message: string) => Promise<Response<boolean>>;
+}

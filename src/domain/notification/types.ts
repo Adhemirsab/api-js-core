@@ -1,1 +1,1 @@
-export type NotificationChannel = "discord";
+export type NotificationChannel = "discord" | "whatsapp";

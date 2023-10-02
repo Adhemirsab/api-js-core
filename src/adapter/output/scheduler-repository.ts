@@ -26,7 +26,7 @@ export const schedulerRepository = (): SchedulerRepository => ({
 
     const command = new CreateScheduleCommand({
       Name: id,
-      Description: `schedule for item ${id}`,
+      Description: `${frecuencyType} schedule for ${id}`,
       ScheduleExpression: cronExpression,
       FlexibleTimeWindow: { Mode: "FLEXIBLE", MaximumWindowInMinutes: 60 },
       Target: {
