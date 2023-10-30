@@ -5,7 +5,7 @@ import {
   SchedulerRepository,
   LoanRepository,
 } from "./ports.js";
-import { FrecuencyType } from "./types.js";
+import { FrecuencyType, Loan } from "./types.js";
 
 const getStartEnd = (
   initStartAt: number,
@@ -48,7 +48,13 @@ export const loanUseCase = (
   createLoan: async (params) => {
     const id = idRepository.generateID();
 
-    const [ok, loan, error] = await loanRepository.saveLoan({ id, ...params });
+    const tempLoan: Loan = {
+      id,
+      monthlyPayment: params.amount / params.paymentTimes,
+      ...params,
+    };
+
+    const [ok, loan, error] = await loanRepository.saveLoan(tempLoan);
     if (!ok) {
       return [false, undefined, error];
     }
@@ -58,14 +64,18 @@ export const loanUseCase = (
       .setHoursMinutesSeconds(0, 720 + loan.timezoneOffsetMinutes, 0)
       .toEpoch();
 
-    const [startAt, endAt] = getStartEnd(initStartAt, loan.times, loan.type);
+    const [startAt, endAt] = getStartEnd(
+      initStartAt,
+      loan.paymentTimes,
+      loan.frecuencyType,
+    );
 
     const [schedulerOk, _, schedulerError] =
       await schedulerRepository.createSchedule(
         loan.id,
         startAt,
         endAt,
-        loan.type,
+        loan.frecuencyType,
         loan,
       );
 

@@ -3,7 +3,6 @@ import {
   APIGatewayProxyStructuredResultV2,
 } from "aws-lambda";
 import { CreateLoanParams } from "../../domain/loan/types.js";
-import { tryParseJson } from "../../utilities/parse-json.js";
 import { idRepository } from "../output/id-repository.js";
 import { loanUseCase } from "../../domain/loan/use-case.js";
 import { loanRepository } from "../output/loan-repository.js";
@@ -23,36 +22,10 @@ const response = <T>(
   body: JSON.stringify(body),
 });
 
-const validateBody = (body: unknown): body is CreateLoanParams => {
-  if (typeof body !== "object" || body === null) return false;
-
-  const { name, amount, startAt, times, type, timezoneOffsetMinutes } =
-    body as Record<string, unknown>;
-
-  if (typeof name !== "string") return false;
-  if (typeof amount !== "number" || amount < 1) return false;
-  if (typeof startAt !== "number" || amount < 0) return false;
-  if (typeof times !== "number" || amount < 0) return false;
-  if (
-    typeof type !== "string" ||
-    !["monthly", "weekly", "daily"].includes(type)
-  )
-    return false;
-  if (typeof timezoneOffsetMinutes !== "number") return false;
-
-  return true;
-};
-
 export const createLoanHandler = async (
   event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyStructuredResultV2> => {
-  const [ok, body, error] = tryParseJson<CreateLoanParams>(
-    event.body,
-    validateBody,
-  );
-  if (!ok) {
-    return failure(error);
-  }
+  const body = JSON.parse(event.body || "{}") as CreateLoanParams;
 
   const idRepo = idRepository();
   const loanRepo = loanRepository();
