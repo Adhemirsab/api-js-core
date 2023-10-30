@@ -4,6 +4,7 @@ import { CreateLoanParams, FrecuencyType, Loan } from "./types.js";
 // inbound
 export interface LoanService {
   createLoan: (params: CreateLoanParams) => Promise<Response<Loan>>;
+  getLoans: () => Promise<Response<Loan[]>>;
 }
 
 // outbound
@@ -13,6 +14,7 @@ export interface IDRepository {
 
 export interface LoanRepository {
   saveLoan: (loan: Loan) => Promise<Response<Loan>>;
+  getLoans: () => Promise<Response<Loan[]>>;
 }
 
 export interface SchedulerRepository {

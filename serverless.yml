@@ -40,6 +40,14 @@ functions:
     handler: dist/notification.handler
     package:
       patterns: dist/notification.js
+  getLoans:
+    handler: dist/get-loans.handler
+    package:
+      patterns: dist/get-loans.js
+    events:
+      - httpApi:
+          method: GET
+          path: /${self:custom.version}/loans
   createLoan:
     handler: dist/create-loan.handler
     package:

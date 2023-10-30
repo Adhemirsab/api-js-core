@@ -26,6 +26,6 @@ export type Loan = {
   paymentTimes: number;
   currency: "USD" | "PEN";
   frecuencyType: FrecuencyType;
-  typetype: number;
+  monthlyPayment: number;
   timezoneOffsetMinutes: number;
 };

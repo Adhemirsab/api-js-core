@@ -85,4 +85,12 @@ export const loanUseCase = (
 
     return [true, loan, undefined];
   },
+  getLoans: async () => {
+    const [ok, loans, error] = await loanRepository.getLoans();
+    if (!ok) {
+      return [false, undefined, error];
+    }
+
+    return [true, loans, undefined];
+  },
 });
