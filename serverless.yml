@@ -48,6 +48,8 @@ functions:
       - httpApi:
           method: GET
           path: /${self:custom.version}/loans
+    environment:
+      ENV_LOAN_TABLE_NAME: !Ref LoanTable
   createLoan:
     handler: dist/create-loan.handler
     package:
