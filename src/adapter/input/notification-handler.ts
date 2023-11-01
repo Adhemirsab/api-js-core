@@ -11,7 +11,7 @@ export const notificationHandler = async (event: unknown): Promise<boolean> => {
   const [ok, result, error] = await notificationUseCase(
     discordRepo,
     whatssappRepo,
-  ).sendNotification("discord", message);
+  ).sendNotification("whatsapp", message);
 
   if (!ok) {
     throw error;
