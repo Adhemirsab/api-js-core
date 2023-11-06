@@ -10,40 +10,34 @@ export const whatssappRepository = (): WhatssappRepository => ({
     const token =
       "EAAMfZCGrCvQcBO9LzvN91VIOYkMD3nNzcVzCwrJznqTUwZAnKDJoMsGuD9aaIMsPOFyiSdZCA7geqgT5I5OwtZCJOY89ha8StI54TPAsxCBXZCG6hoZBErUgBqIVks0IwBcnZAWDEZAyRBWm94U9kgks6mMCxTIStghgQRZC3ifo4jTJ5bTmTCDl7BJe1B9If";
 
-    const result = await tryFn(async () => {
-      await axios({
-        method: "POST",
-        url: `https://graph.facebook.com/v17.0/128041223734612/messages?access_token=${token}`,
-        data: {
-          messaging_product: "whatsapp",
-          to: `51${phone}`,
+    const url = "https://graph.facebook.com/v18.0/128041223734612/messages";
 
-          type: "template",
-          template: {
-            name: "message",
-            language: {
-              code: "es",
-            },
+    const headers = {
+      authorization: `Bearer ${token}`,
+    };
+
+    const data = {
+      messaging_product: "whatsapp",
+      to: `51${phone}`,
+      type: "template",
+      template: {
+        name: "message",
+        language: { code: "es" },
+        components: [
+          {
+            type: "body",
+            parameters: [{ type: "text", text: name }],
           },
-          components: [
-            {
-              type: "BODY",
-              parameters: [
-                {
-                  type: "text",
-                  text: name,
-                },
-              ],
-            },
-          ],
-        },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        ],
+      },
+    };
+
+    const result = await tryFn(async () => {
+      await axios.post(url, data, { headers });
+
       return true;
     });
+
     return result;
   },
 });
