@@ -4,7 +4,7 @@ import {
 } from "aws-lambda";
 import { CreateLoanParams } from "../../domain/loan/types.js";
 import { idRepository } from "../output/id-repository.js";
-import { loanUseCase } from "../../domain/loan/use-case.js";
+import { createLoanUseCase } from "../../domain/loan/use-case.js";
 import { loanRepository } from "../output/loan-repository.js";
 import { schedulerRepository } from "../output/scheduler-repository.js";
 import { isCustomError } from "../../domain/lib/custom-error.js";
@@ -31,7 +31,7 @@ export const createLoanHandler = async (
   const loanRepo = loanRepository();
   const schedulerRepo = schedulerRepository();
 
-  const [loanOk, loan, loanError] = await loanUseCase(
+  const [loanOk, loan, loanError] = await createLoanUseCase(
     idRepo,
     loanRepo,
     schedulerRepo,

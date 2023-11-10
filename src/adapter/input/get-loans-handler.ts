@@ -1,8 +1,6 @@
 import { APIGatewayProxyStructuredResultV2 } from "aws-lambda";
-import { idRepository } from "../output/id-repository.js";
 import { loanRepository } from "../output/loan-repository.js";
-import { schedulerRepository } from "../output/scheduler-repository.js";
-import { loanUseCase } from "../../domain/loan/use-case.js";
+import { listLoansUseCase } from "../../domain/loan/use-case.js";
 import { isCustomError } from "../../domain/lib/custom-error.js";
 
 const failure = (error: Error): APIGatewayProxyStructuredResultV2 => ({
@@ -18,20 +16,13 @@ const response = <T>(
   body: JSON.stringify(body),
 });
 
-export const getLoansHandler =
+export const listLoansHandler =
   async (): Promise<APIGatewayProxyStructuredResultV2> => {
-    const idRepo = idRepository();
     const loanRepo = loanRepository();
-    const schedulerRepo = schedulerRepository();
 
-    const [loanOk, loans, loanError] = await loanUseCase(
-      idRepo,
-      loanRepo,
-      schedulerRepo,
-    ).getLoans();
-
-    if (!loanOk) {
-      return failure(loanError);
+    const [ok, loans, error] = await listLoansUseCase(loanRepo).listLoans();
+    if (!ok) {
+      return failure(error);
     }
 
     return response(200, loans);

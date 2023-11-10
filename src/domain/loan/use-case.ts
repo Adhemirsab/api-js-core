@@ -1,9 +1,10 @@
 import { withEpoch } from "../lib/epoch.js";
 import {
-  LoanService,
   IDRepository,
   SchedulerRepository,
   LoanRepository,
+  CreateLoanService,
+  ListLoansService,
 } from "./ports.js";
 import { FrecuencyType, Loan } from "./types.js";
 
@@ -40,11 +41,11 @@ const getStartEnd = (
   }
 };
 
-export const loanUseCase = (
+export const createLoanUseCase = (
   idRepository: IDRepository,
   loanRepository: LoanRepository,
   schedulerRepository: SchedulerRepository,
-): LoanService => ({
+): CreateLoanService => ({
   createLoan: async (params) => {
     const id = idRepository.generateID();
 
@@ -85,12 +86,10 @@ export const loanUseCase = (
 
     return [true, loan, undefined];
   },
-  getLoans: async () => {
-    const [ok, loans, error] = await loanRepository.getLoans();
-    if (!ok) {
-      return [false, undefined, error];
-    }
+});
 
-    return [true, loans, undefined];
-  },
+export const listLoansUseCase = (
+  loanRepository: LoanRepository,
+): ListLoansService => ({
+  listLoans: () => loanRepository.listLoans(),
 });

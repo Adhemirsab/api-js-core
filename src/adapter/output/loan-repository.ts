@@ -37,7 +37,7 @@ export const loanRepository = (): LoanRepository => ({
 
     return [true, loan, undefined];
   },
-  getLoans: async () => {
+  listLoans: async () => {
     const client = new DynamoDBClient();
     const ddbDocClient = DynamoDBDocumentClient.from(client);
 

@@ -8,6 +8,7 @@ provider:
   architecture: arm64
   region: ${env:AWS_REGION}
   stage: ${env:STAGE}
+  versionFunctions: false
   httpApi:
     cors: true
     name: ${self:service}-${self:provider.stage}-api
@@ -40,10 +41,10 @@ functions:
     handler: dist/notification.handler
     package:
       patterns: dist/notification.js
-  getLoans:
-    handler: dist/get-loans.handler
+  listLoans:
+    handler: dist/list-loans.handler
     package:
-      patterns: dist/get-loans.js
+      patterns: dist/list-loans.js
     events:
       - httpApi:
           method: GET
