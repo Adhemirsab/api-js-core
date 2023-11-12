@@ -14,14 +14,6 @@ const getStartEnd = (
   frecuencyType: FrecuencyType,
 ): [startAt: number, endAt: number] => {
   switch (frecuencyType) {
-    case "daily": {
-      const startAt = withEpoch(initStartAt).addDays(1).toEpoch();
-      const endAt = withEpoch(startAt)
-        .addDays(times - 1)
-        .toEpoch();
-
-      return [startAt, endAt];
-    }
     case "weekly": {
       const startAt = withEpoch(initStartAt).addWeeks(1).toEpoch();
       const endAt = withEpoch(startAt)

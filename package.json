@@ -14,20 +14,20 @@
     "package": "AWS_REGION=\"us-east-1\" STAGE=\"qa\" npx --yes serverless package"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.122",
-    "@types/node": "^20.6.5",
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
-    "@typescript-eslint/parser": "^6.7.3",
-    "esbuild": "^0.19.3",
-    "eslint": "^8.50.0",
+    "@types/aws-lambda": "^8.10.126",
+    "@types/node": "^20.9.0",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "esbuild": "^0.19.5",
+    "eslint": "^8.53.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.421.0",
-    "@aws-sdk/client-scheduler": "^3.421.0",
-    "@aws-sdk/lib-dynamodb": "^3.421.0",
-    "axios": "^1.5.1",
-    "ulidx": "^2.1.0"
+    "@aws-sdk/client-dynamodb": "^3.449.0",
+    "@aws-sdk/client-scheduler": "^3.449.0",
+    "@aws-sdk/lib-dynamodb": "^3.449.0",
+    "axios": "^1.6.1",
+    "ulidx": "^2.2.1"
   }
 }

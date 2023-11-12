@@ -1,4 +1,4 @@
-export type FrecuencyType = "monthly" | "weekly" | "daily";
+export type FrecuencyType = "monthly" | "weekly";
 
 export type CreateLoanParams = {
   name: string;
