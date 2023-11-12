@@ -27,13 +27,19 @@ const calculateStartEnd = (
   switch (frecuency) {
     case "monthly": {
       const startAt = withEpoch(normalizedEpoch).addMonths(1).toEpoch();
-      const endAt = withEpoch(normalizedEpoch).addMonths(times).addDays(1).toEpoch();
+      const endAt = withEpoch(normalizedEpoch)
+        .addMonths(times)
+        .addDays(1)
+        .toEpoch();
 
       return [startAt, endAt];
     }
     case "weekly": {
       const startAt = withEpoch(normalizedEpoch).addWeeks(1).toEpoch();
-      const endAt = withEpoch(normalizedEpoch).addWeeks(times).addDays(1).toEpoch();
+      const endAt = withEpoch(normalizedEpoch)
+        .addWeeks(times)
+        .addDays(1)
+        .toEpoch();
 
       return [startAt, endAt];
     }

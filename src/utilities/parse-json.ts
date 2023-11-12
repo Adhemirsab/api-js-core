@@ -1,4 +1,4 @@
-import { CustomError } from "../domain/lib/custom-error.js";
+import { ValidationError } from "yup";
 import { Response, tryFnSync } from "../domain/lib/try-fn.js";
 
 export const tryParseJson = <T>(
@@ -7,12 +7,27 @@ export const tryParseJson = <T>(
 ): Response<T> => {
   const [ok, data, error] = tryFnSync(() => JSON.parse(str) as unknown);
   if (!ok) {
-    return [ok, data, new CustomError(400, error.message)];
+    return [false, undefined, error];
   }
 
-  if (validator(data)) {
-    return [true, data, undefined];
+  const [yupOk, result, yupError] = tryFnSync(() => {
+    if (validator(data)) {
+      return data;
+    }
+
+    throw new Error("Invalid body");
+  });
+  if (!yupOk) {
+    return [
+      false,
+      undefined,
+      new Error(
+        yupError instanceof ValidationError
+          ? yupError.errors.join(", ")
+          : yupError.message,
+      ),
+    ];
   }
 
-  return [false, undefined, new CustomError(400, "Invalid body")];
+  return [true, result, undefined];
 };

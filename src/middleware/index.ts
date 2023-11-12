@@ -1,5 +1,4 @@
 import { APIGatewayProxyStructuredResultV2 } from "aws-lambda";
-import { getErrorMessage } from "../utilities/unkown.js";
 import { tryFn } from "../domain/lib/try-fn.js";
 
 type AwsFunction<E, C, R> = (event: E, context: C) => Promise<R>;
@@ -69,7 +68,7 @@ export const httpError = <E, C>(): Middleware<
     }
 
     const body = {
-      message: ["unhandled error", getErrorMessage(error)].join(": "),
+      message: ["unhandled error", error.message].join(": "),
     };
 
     return {

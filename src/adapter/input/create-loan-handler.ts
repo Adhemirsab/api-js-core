@@ -7,7 +7,26 @@ import { idRepository } from "../output/id-repository.js";
 import { createLoanUseCase } from "../../domain/loan/use-case.js";
 import { loanRepository } from "../output/loan-repository.js";
 import { schedulerRepository } from "../output/scheduler-repository.js";
-import { isCustomError } from "../../domain/lib/custom-error.js";
+import { CustomError, isCustomError } from "../../domain/lib/custom-error.js";
+import { tryParseJson } from "../../utilities/parse-json.js";
+import { object, number, string } from "yup";
+
+const validateBody = (body: unknown): body is CreateLoanParams => {
+  object({
+    name: string().required(),
+    phone: string().required(),
+    amount: number().positive().required(),
+    startAt: number().integer().positive().required(),
+    paymentTimes: number().integer().min(1).required(),
+    currency: string().oneOf(["USD", "PEN"]).required(),
+    frecuencyTime: string().oneOf(["monthly", "weekly"]).required(),
+    timezoneOffsetMinutes: number().required(),
+  })
+    .strict()
+    .validateSync(body, { abortEarly: false });
+
+  return true;
+};
 
 const failure = (error: Error): APIGatewayProxyStructuredResultV2 => ({
   statusCode: isCustomError(error) ? error.statusCode : 500,
@@ -25,7 +44,13 @@ const response = <T>(
 export const createLoanHandler = async (
   event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyStructuredResultV2> => {
-  const body = JSON.parse(event.body || "{}") as CreateLoanParams;
+  const [ok, body, error] = tryParseJson<CreateLoanParams>(
+    event.body,
+    validateBody,
+  );
+  if (!ok) {
+    return failure(new CustomError(400, error.message));
+  }
 
   const idRepo = idRepository();
   const loanRepo = loanRepository();
