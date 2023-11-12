@@ -12,7 +12,6 @@ const cronMap = (epochStartAt: number): Record<FrecuencyType, string> => {
     epochToUTC(epochStartAt);
 
   return {
-    daily: `cron(${minutes} ${hours} * * ? *)`,
     weekly: `cron(${minutes} ${hours} ? * ${dayOfTheWeek} *)`,
     monthly: `cron(${minutes} ${hours} ${dayOfTheMonth} * ? *)`,
   };

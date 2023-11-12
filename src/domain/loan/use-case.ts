@@ -6,27 +6,34 @@ import {
   CreateLoanService,
   ListLoansService,
 } from "./ports.js";
-import { FrecuencyType, Loan } from "./types.js";
+import { CreateLoanParams, FrecuencyType, Loan } from "./types.js";
 
-const getStartEnd = (
-  initStartAt: number,
+const generateLoan = (params: CreateLoanParams, id: string): Loan => ({
+  id,
+  monthlyPayment: params.amount / params.paymentTimes,
+  ...params,
+});
+
+const calculateStartEnd = (
+  epoch: number,
+  frecuency: FrecuencyType,
   times: number,
-  frecuencyType: FrecuencyType,
+  timezoneOffsetMinutes: number,
 ): [startAt: number, endAt: number] => {
-  switch (frecuencyType) {
-    case "weekly": {
-      const startAt = withEpoch(initStartAt).addWeeks(1).toEpoch();
-      const endAt = withEpoch(startAt)
-        .addWeeks(times - 1)
-        .toEpoch();
+  const normalizedEpoch = withEpoch(epoch)
+    .setHoursMinutesSeconds(12, timezoneOffsetMinutes, 0)
+    .toEpoch();
+
+  switch (frecuency) {
+    case "monthly": {
+      const startAt = withEpoch(normalizedEpoch).addMonths(1).toEpoch();
+      const endAt = withEpoch(normalizedEpoch).addMonths(times).addDays(1).toEpoch();
 
       return [startAt, endAt];
     }
-    case "monthly": {
-      const startAt = withEpoch(initStartAt).addMonths(1).toEpoch();
-      const endAt = withEpoch(startAt)
-        .addMonths(times - 1)
-        .toEpoch();
+    case "weekly": {
+      const startAt = withEpoch(normalizedEpoch).addWeeks(1).toEpoch();
+      const endAt = withEpoch(normalizedEpoch).addWeeks(times).addDays(1).toEpoch();
 
       return [startAt, endAt];
     }
@@ -41,26 +48,18 @@ export const createLoanUseCase = (
   createLoan: async (params) => {
     const id = idRepository.generateID();
 
-    const tempLoan: Loan = {
-      id,
-      monthlyPayment: params.amount / params.paymentTimes,
-      ...params,
-    };
+    const tempLoan = generateLoan(params, id);
 
     const [ok, loan, error] = await loanRepository.saveLoan(tempLoan);
     if (!ok) {
       return [false, undefined, error];
     }
 
-    const initStartAt = withEpoch(loan.startAt)
-      .addDays(1)
-      .setHoursMinutesSeconds(0, 720 + loan.timezoneOffsetMinutes, 0)
-      .toEpoch();
-
-    const [startAt, endAt] = getStartEnd(
-      initStartAt,
-      loan.paymentTimes,
+    const [startAt, endAt] = calculateStartEnd(
+      loan.startAt,
       loan.frecuencyType,
+      loan.paymentTimes,
+      loan.timezoneOffsetMinutes,
     );
 
     const [schedulerOk, _, schedulerError] =

@@ -2,12 +2,9 @@ export type FrecuencyType = "monthly" | "weekly";
 
 export type CreateLoanParams = {
   name: string;
-  codeLoan: string;
-  idUser: string;
   phone: string;
   amount: number;
   startAt: number;
-  endAt: number;
   paymentTimes: number;
   currency: "USD" | "PEN";
   frecuencyType: FrecuencyType;
@@ -17,12 +14,9 @@ export type CreateLoanParams = {
 export type Loan = {
   id: string;
   name: string;
-  codeLoan: string;
-  idUser: string;
   phone: string;
   amount: number;
   startAt: number;
-  endAt: number;
   paymentTimes: number;
   currency: "USD" | "PEN";
   frecuencyType: FrecuencyType;
