@@ -19,7 +19,7 @@ const validateBody = (body: unknown): body is CreateLoanParams => {
     startAt: number().integer().positive().required(),
     paymentTimes: number().integer().min(1).required(),
     currency: string().oneOf(["USD", "PEN"]).required(),
-    frecuencyTime: string().oneOf(["monthly", "weekly"]).required(),
+    frecuencyType: string().oneOf(["monthly", "weekly"]).required(),
     timezoneOffsetMinutes: number().required(),
   })
     .strict()
