@@ -6,19 +6,24 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { LoanRepository } from "../../domain/loan/ports.js";
 import { tryFn } from "../../domain/lib/try-fn.js";
-import { FrecuencyType, Loan } from "../../domain/loan/types.js";
+import { Loan } from "../../domain/loan/types.js";
+import { validate } from "../../utilities/validate-yup.js";
+import { ObjectSchema, number, object, string } from "yup";
 
-const toValue = <T>(
-  validator: (obj: unknown) => obj is T,
-  value: unknown,
-  def: T,
-): T => {
-  if (!validator(value)) {
-    return def;
-  }
-
-  return value;
-};
+const schema = (): ObjectSchema<Loan> =>
+  object({
+    id: string().required(),
+    name: string().required(),
+    phone: string().required(),
+    amount: number().positive().required(),
+    startAt: number().integer().positive().required(),
+    paymentTimes: number().integer().min(1).required(),
+    currency: string().oneOf(["USD", "PEN"]).required(),
+    frecuencyType: string().oneOf(["monthly", "weekly"]).required(),
+    timezoneOffsetMinutes: number().required(),
+    interestRate: number().positive().required(),
+    loanType: string().oneOf(["lend", "borrow"]).required(),
+  }).strict();
 
 export const loanRepository = (): LoanRepository => ({
   saveLoan: async (loan) => {
@@ -52,71 +57,14 @@ export const loanRepository = (): LoanRepository => ({
 
     const items = data.Items || [];
 
-    const loans = items.map<Loan>((i) => ({
-      id: toValue<string>((o): o is string => typeof o === "string", i.id, ""),
-      name: toValue<string>(
-        (o): o is string => typeof o === "string",
-        i.name,
-        "",
-      ),
-      codeLoan: toValue<string>(
-        (o): o is string => typeof o === "string",
-        i.codeLoan,
-        "",
-      ),
-      idUser: toValue<string>(
-        (o): o is string => typeof o === "string",
-        i.idUser,
-        "",
-      ),
-      phone: toValue<string>(
-        (o): o is string => typeof o === "string",
-        i.phone,
-        "",
-      ),
-      amount: toValue<number>(
-        (o): o is number => typeof o === "number",
-        i.amount,
-        0,
-      ),
-      startAt: toValue<number>(
-        (o): o is number => typeof o === "number",
-        i.startAt,
-        0,
-      ),
-      endAt: toValue<number>(
-        (o): o is number => typeof o === "number",
-        i.endAt,
-        0,
-      ),
-      paymentTimes: toValue<number>(
-        (o): o is number => typeof o === "number",
-        i.paymentTimes,
-        0,
-      ),
-      currency: toValue<"USD" | "PEN">(
-        (o): o is "USD" | "PEN" =>
-          typeof o === "string" && ["USD", "PEN"].includes(o),
-        i.currency,
-        "USD",
-      ),
-      frecuencyType: toValue<FrecuencyType>(
-        (o): o is FrecuencyType =>
-          typeof o === "string" && ["monthly", "weekly", "daily"].includes(o),
-        i.frecuencyType,
-        "monthly",
-      ),
-      monthlyPayment: toValue<number>(
-        (o): o is number => typeof o === "number",
-        i.monthlyPayment,
-        0,
-      ),
-      timezoneOffsetMinutes: toValue<number>(
-        (o): o is number => typeof o === "number",
-        i.timezoneOffsetMinutes,
-        0,
-      ),
-    }));
+    const loans = items.filter<Loan>((i): i is Loan => {
+      const [ok] = validate(i, schema());
+      if (!ok) {
+        // TODO log error
+      }
+
+      return ok;
+    });
 
     return [true, loans, undefined];
   },

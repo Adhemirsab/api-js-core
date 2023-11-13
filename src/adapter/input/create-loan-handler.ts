@@ -8,11 +8,12 @@ import { createLoanUseCase } from "../../domain/loan/use-case.js";
 import { loanRepository } from "../output/loan-repository.js";
 import { schedulerRepository } from "../output/scheduler-repository.js";
 import { CustomError, isCustomError } from "../../domain/lib/custom-error.js";
-import { tryParseJson } from "../../utilities/parse-json.js";
+import { tryJsonParse } from "../../utilities/parse-json.js";
 import { object, number, string, ObjectSchema } from "yup";
+import { validate } from "../../utilities/validate-yup.js";
 
-const validateBody = (body: unknown): body is CreateLoanParams => {
-  const schema: ObjectSchema<CreateLoanParams> = object({
+const schema = (): ObjectSchema<CreateLoanParams> =>
+  object({
     name: string().required(),
     phone: string().required(),
     amount: number().positive().required(),
@@ -24,11 +25,6 @@ const validateBody = (body: unknown): body is CreateLoanParams => {
     interestRate: number().positive().required(),
     loanType: string().oneOf(["lend", "borrow"]).required(),
   }).strict();
-
-  schema.validateSync(body, { abortEarly: false });
-
-  return true;
-};
 
 const failure = (error: Error): APIGatewayProxyStructuredResultV2 => ({
   statusCode: isCustomError(error) ? error.statusCode : 500,
@@ -46,12 +42,14 @@ const response = <T>(
 export const createLoanHandler = async (
   event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyStructuredResultV2> => {
-  const [ok, body, error] = tryParseJson<CreateLoanParams>(
-    event.body,
-    validateBody,
-  );
+  const [ok, body, parseError] = tryJsonParse(event.body);
   if (!ok) {
-    return failure(new CustomError(400, error.message));
+    return failure(new CustomError(400, parseError.message));
+  }
+
+  const [valOk, params, validateError] = validate(body, schema());
+  if (!valOk) {
+    return failure(new CustomError(400, validateError.message));
   }
 
   const idRepo = idRepository();
@@ -62,7 +60,7 @@ export const createLoanHandler = async (
     idRepo,
     loanRepo,
     schedulerRepo,
-  ).createLoan(body);
+  ).createLoan(params);
 
   if (!loanOk) {
     return failure(loanError);

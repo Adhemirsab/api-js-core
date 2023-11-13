@@ -1,6 +1,9 @@
 import { ValidationError } from "yup";
 import { Response, tryFnSync } from "../domain/lib/try-fn.js";
 
+export const tryJsonParse = (str = ""): Response<unknown> =>
+  tryFnSync(() => JSON.parse(str) as unknown);
+
 export const tryParseJson = <T>(
   str = "",
   validator: (obj: unknown) => obj is T,
