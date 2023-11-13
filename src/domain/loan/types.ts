@@ -9,17 +9,10 @@ export type CreateLoanParams = {
   currency: "USD" | "PEN";
   frecuencyType: FrecuencyType;
   timezoneOffsetMinutes: number;
+  interestRate: number;
+  loanType: "lend" | "borrow";
 };
 
-export type Loan = {
+export type Loan = CreateLoanParams & {
   id: string;
-  name: string;
-  phone: string;
-  amount: number;
-  startAt: number;
-  paymentTimes: number;
-  currency: "USD" | "PEN";
-  frecuencyType: FrecuencyType;
-  monthlyPayment: number;
-  timezoneOffsetMinutes: number;
 };

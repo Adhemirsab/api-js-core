@@ -9,10 +9,10 @@ import { loanRepository } from "../output/loan-repository.js";
 import { schedulerRepository } from "../output/scheduler-repository.js";
 import { CustomError, isCustomError } from "../../domain/lib/custom-error.js";
 import { tryParseJson } from "../../utilities/parse-json.js";
-import { object, number, string } from "yup";
+import { object, number, string, ObjectSchema } from "yup";
 
 const validateBody = (body: unknown): body is CreateLoanParams => {
-  object({
+  const schema: ObjectSchema<CreateLoanParams> = object({
     name: string().required(),
     phone: string().required(),
     amount: number().positive().required(),
@@ -21,9 +21,11 @@ const validateBody = (body: unknown): body is CreateLoanParams => {
     currency: string().oneOf(["USD", "PEN"]).required(),
     frecuencyType: string().oneOf(["monthly", "weekly"]).required(),
     timezoneOffsetMinutes: number().required(),
-  })
-    .strict()
-    .validateSync(body, { abortEarly: false });
+    interestRate: number().positive().required(),
+    loanType: string().oneOf(["lend", "borrow"]).required(),
+  }).strict();
+
+  schema.validateSync(body, { abortEarly: false });
 
   return true;
 };
