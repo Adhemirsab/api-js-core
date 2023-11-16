@@ -27,7 +27,17 @@ export const eventLog = <E, C, R>(): Middleware<E, C, R> => {
     console.log("context |", JSON.stringify(context, null, 2));
     console.log("env |", JSON.stringify(process.env, null, 2));
 
-    const result = await next(event, context);
+    const [ok, result, error] = await tryFn(() => next(event, context));
+    if (!ok) {
+      console.log(
+        "error |",
+        error.name,
+        error.message,
+        JSON.stringify(error, null, 2),
+      );
+
+      throw error;
+    }
 
     console.log("result |", JSON.stringify(result, null, 2));
 

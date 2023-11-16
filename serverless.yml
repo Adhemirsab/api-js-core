@@ -37,10 +37,6 @@ custom:
   prefix: ${self:service}-${self:provider.stage}
 
 functions:
-  notification:
-    handler: dist/notification.handler
-    package:
-      patterns: dist/notification.js
   listLoans:
     handler: dist/list-loans.handler
     package:
@@ -61,9 +57,7 @@ functions:
           path: /${self:custom.version}/loans
     environment:
       ENV_LOAN_TABLE_NAME: !Ref LoanTable
-      ENV_NOTIFICATION_FUNCTION_ARN: !GetAtt NotificationLambdaFunction.Arn
-      ENV_SCHEDULER_ROLE_ARN: !GetAtt SchedulerRole.Arn
-      ENV_SCHEDULE_GROUP_NAME: !Ref CoreScheduleGroup
+      ENV_CREATE_SCHEDULE_FUNCTION_NAME: !ImportValue "api-go-messenger-${self:provider.stage}-createschedulefunctionname"
 
 resources:
   Resources:

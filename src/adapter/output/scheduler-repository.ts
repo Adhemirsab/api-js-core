@@ -3,7 +3,6 @@ import {
   CreateScheduleCommand,
 } from "@aws-sdk/client-scheduler";
 import { epochToMillis, epochToUTC } from "../../utilities/time.js";
-import { SchedulerRepository } from "../../domain/loan/ports.js";
 import { tryFn } from "../../domain/lib/try-fn.js";
 import { FrecuencyType } from "../../domain/loan/types.js";
 
@@ -17,8 +16,15 @@ const cronMap = (epochStartAt: number): Record<FrecuencyType, string> => {
   };
 };
 
-export const schedulerRepository = (): SchedulerRepository => ({
-  createSchedule: async (id, startAt, endAt, frecuencyType, payload) => {
+// @deprecated
+export const schedulerRepository = () => ({
+  createSchedule: async (
+    id: string,
+    startAt: number,
+    endAt: number,
+    frecuencyType: FrecuencyType,
+    payload: unknown,
+  ) => {
     const cronExpression = cronMap(startAt)[frecuencyType];
 
     const client = new SchedulerClient();

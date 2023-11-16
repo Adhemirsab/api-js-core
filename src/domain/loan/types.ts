@@ -15,4 +15,5 @@ export type CreateLoanParams = {
 
 export type Loan = CreateLoanParams & {
   id: string;
+  monthlyPayment: number;
 };

@@ -1,10 +1,10 @@
 import { withEpoch } from "../lib/epoch.js";
 import {
   IDRepository,
-  SchedulerRepository,
   LoanRepository,
   CreateLoanService,
   ListLoansService,
+  LambdaRepository,
 } from "./ports.js";
 import { CreateLoanParams, FrecuencyType, Loan } from "./types.js";
 
@@ -49,9 +49,9 @@ const calculateStartEnd = (
 export const createLoanUseCase = (
   idRepository: IDRepository,
   loanRepository: LoanRepository,
-  schedulerRepository: SchedulerRepository,
+  lambdaRepository: LambdaRepository,
 ): CreateLoanService => ({
-  createLoan: async (params) => {
+  createLoan: async (params, functionName) => {
     const id = idRepository.generateID();
 
     const tempLoan = generateLoan(params, id);
@@ -68,17 +68,25 @@ export const createLoanUseCase = (
       loan.timezoneOffsetMinutes,
     );
 
-    const [schedulerOk, _, schedulerError] =
-      await schedulerRepository.createSchedule(
-        loan.id,
+    const [invokeOk, _, invokeError] = await lambdaRepository.invoke(
+      functionName,
+      {
+        id,
         startAt,
         endAt,
-        loan.frecuencyType,
-        loan,
-      );
-
-    if (!schedulerOk) {
-      return [false, undefined, schedulerError];
+        frecuencyType: loan.frecuencyType,
+        payload: {
+          phone: loan.phone,
+          templateName: "message",
+          languageCode: "es",
+          variables: {
+            name: loan.name,
+          },
+        },
+      },
+    );
+    if (!invokeOk) {
+      return [false, undefined, invokeError];
     }
 
     return [true, loan, undefined];

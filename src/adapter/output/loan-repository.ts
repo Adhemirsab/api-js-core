@@ -23,6 +23,7 @@ const schema = (): ObjectSchema<Loan> =>
     timezoneOffsetMinutes: number().required(),
     interestRate: number().positive().required(),
     loanType: string().oneOf(["lend", "borrow"]).required(),
+    monthlyPayment: number().positive().required(),
   }).strict();
 
 export const loanRepository = (): LoanRepository => ({

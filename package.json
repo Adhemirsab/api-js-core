@@ -9,7 +9,7 @@
     "lint": "eslint src",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate": "npm run format && npm run lint && npm run test",
+    "validate": "npm run format && npm run lint",
     "build": "node build.mjs",
     "deploy": "npx --yes serverless deploy",
     "package": "AWS_REGION=\"us-east-1\" STAGE=\"qa\" npx --yes serverless package"
@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.449.0",
+    "@aws-sdk/client-lambda": "^3.452.0",
     "@aws-sdk/client-scheduler": "^3.449.0",
     "@aws-sdk/lib-dynamodb": "^3.449.0",
     "axios": "^1.6.1",

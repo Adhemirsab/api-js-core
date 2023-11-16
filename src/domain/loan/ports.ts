@@ -1,9 +1,12 @@
 import { Response } from "../lib/try-fn.js";
-import { CreateLoanParams, FrecuencyType, Loan } from "./types.js";
+import { CreateLoanParams, Loan } from "./types.js";
 
 // inbound
 export interface CreateLoanService {
-  createLoan: (params: CreateLoanParams) => Promise<Response<Loan>>;
+  createLoan: (
+    params: CreateLoanParams,
+    createScheduleFunctionName: string,
+  ) => Promise<Response<Loan>>;
 }
 
 export interface ListLoansService {
@@ -20,12 +23,6 @@ export interface LoanRepository {
   listLoans: () => Promise<Response<Loan[]>>;
 }
 
-export interface SchedulerRepository {
-  createSchedule: <T>(
-    id: string,
-    startAt: number,
-    endAt: number,
-    frecuencyType: FrecuencyType,
-    payload: T,
-  ) => Promise<Response<boolean>>;
+export interface LambdaRepository {
+  invoke: (lambdaName: string, payload: unknown) => Promise<Response<unknown>>;
 }

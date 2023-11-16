@@ -6,11 +6,11 @@ import { CreateLoanParams } from "../../domain/loan/types.js";
 import { idRepository } from "../output/id-repository.js";
 import { createLoanUseCase } from "../../domain/loan/use-case.js";
 import { loanRepository } from "../output/loan-repository.js";
-import { schedulerRepository } from "../output/scheduler-repository.js";
 import { CustomError, isCustomError } from "../../domain/lib/custom-error.js";
 import { tryJsonParse } from "../../utilities/parse-json.js";
 import { object, number, string, ObjectSchema } from "yup";
 import { validate } from "../../utilities/validate-yup.js";
+import { newLambdaRepository } from "../output/lambda-repository.js";
 
 const schema = (): ObjectSchema<CreateLoanParams> =>
   object({
@@ -52,15 +52,18 @@ export const createLoanHandler = async (
     return failure(new CustomError(400, validateError.message));
   }
 
+  // TODO refactor this
+  const functionName = process.env.ENV_CREATE_SCHEDULE_FUNCTION_NAME || "";
+
   const idRepo = idRepository();
   const loanRepo = loanRepository();
-  const schedulerRepo = schedulerRepository();
+  const lambdaRepository = newLambdaRepository();
 
   const [loanOk, loan, loanError] = await createLoanUseCase(
     idRepo,
     loanRepo,
-    schedulerRepo,
-  ).createLoan(params);
+    lambdaRepository,
+  ).createLoan(params, functionName);
 
   if (!loanOk) {
     return failure(loanError);
