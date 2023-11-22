@@ -77,11 +77,15 @@ export const createLoanUseCase = (
         frecuencyType: loan.frecuencyType,
         payload: {
           phone: loan.phone,
-          templateName: "message",
-          languageCode: "es",
-          variables: {
-            name: loan.name,
-          },
+          templateName: "testfinal",
+          languageCode: "es_ES",
+          variables: [
+            loan.name,
+            String(loan.paymentTimes),
+            String(loan.interestRate),
+            loan.phone,
+            loan.phone,
+          ],
         },
       },
     );
